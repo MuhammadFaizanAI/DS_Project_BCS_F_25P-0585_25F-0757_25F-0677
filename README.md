@@ -261,13 +261,10 @@ MayDay-404/
 First, every team member must clone the same GitHub repository.
 
 ```bash
-git clone YOUR_REPOSITORY_URL
+git clone https://github.com/MuhammadFaizanAI/DS_Project_BCS_F_25P-0585_25F-0757_25F-0677.git
 cd MayDay-404
 ```
 
-Replace `YOUR_REPOSITORY_URL` with our actual GitHub repository URL.
-
-We should not create separate repositories for our individual work.
 
 ### A. Windows Setup
 
