@@ -1,481 +1,634 @@
 # MayDay-404
-### Air Traffic Control Simulation System
+### Air Traffic Control Simulation Game
 
-## 1. Introduction
+## 1. Project Overview
 
-We are developing **MayDay-404**, a C++ console-based Air Traffic Control simulation game.
+MayDay-404 is a single-player, console-based Air Traffic Control (ATC) simulation game developed in C++.
 
-In this project, the player takes the role of a Chief Routing Officer responsible for managing aircraft, handling landing requests and emergencies, navigating airspace, and keeping the simulation running successfully.
+The player takes the role of a **Chief Routing Officer (CRO)** responsible for managing the air traffic of BlackBox airline during an island-wide emergency in BitLand.
 
-The main objective of this project is to implement Data Structures and Algorithms from scratch and use them in a practical simulation rather than implementing them as separate, unrelated examples.
+The airspace is facing multiple threats, including:
 
-Our repository contains two main components:
+- Routine aircraft arrivals.
+- Low-fuel and medical emergencies.
+- Weather diversions and mechanical failures.
+- Aircraft hijackings.
+- Missing flights.
+- Cyber attacks on air traffic communications.
+- Hostile military aircraft entering restricted airspace.
 
-1. **DSA Library:** Our own reusable implementations of data structures and algorithms.
-2. **MayDay-404 Application:** The actual game that will use our custom DSA library.
+The CRO must manage these situations by issuing commands, assigning runways, rerouting aircraft, handling emergencies, and maintaining airspace security.
 
----
+The project focuses on implementing custom Data Structures and Algorithms and integrating them into one complete simulation. Every data structure must serve a practical purpose within the game.
 
-## 2. Team Members
+## 2. Game Objectives
 
-We are a team of three students working collaboratively on this project.
+The main objective is to survive all 30 simulation ticks without a critical failure.
 
-| Team Member | Roll Numbes |
-|---|---|
-| Muhammad Faizan | 25P-0585 |
-| Muhammad Soban | 25F-XXXX |
-| Hassan Muaviya | 25F-XXXX |
+### Win Condition
 
-Each team member will contribute to the implementation, testing, integration, and development of the project.
+The player wins by surviving all 30 ticks without:
 
----
+- Aircraft crashes.
+- Successful hijackings.
+- Cyber breaches.
+- War mission failures.
 
-## 3. Our Development Environment
+### Lose Conditions
 
-We are three team members working on the same project and repository. However, we do not all use the same operating system or code editor.
+The game ends when any of the following occurs:
 
-| Development Environment | Tools |
-|---|---|
-| Windows | VS Code |
-| Windows | Visual Studio |
-| Arch Linux (Omarchy) | Neovim |
+- An aircraft crashes.
+- A hijacking succeeds.
+- A cyber breach occurs.
+- A war emergency is not handled within its allowed time.
+- Credibility reaches zero.
+- The player exits the game through the game menu.
 
-This difference does not affect our project because we are using **C++, CMake, and Git**.
+## 3. Project Modules
 
-CMake manages the project build process, allowing each team member to configure and compile the project using their own development environment.
+The project consists of 11 modules divided into four phases according to the Data Structures concepts.
 
-### Technologies We Are Using
+### Phase 1: Linear Structures
 
-- **Language:** C++
-- **C++ Standard:** C++17
-- **Build System:** CMake
-- **Version Control:** Git
-- **Remote Repository:** GitHub
-- **DSA Implementation:** Custom C++ templates
+This phase focuses on pointers, dynamic memory allocation, linked lists, stacks, queues, and file handling.
 
----
+#### Module 1: Aircraft and Crew Registry
 
-## 4. Project Architecture
+**Class:** `Registration`
 
-We have organized the project into separate components so that our DSA implementations remain reusable and the actual game logic stays independent.
+Maintains all active aircraft and crew records.
 
-### A. DSA Library
-
-Location: `dsa-library/`
-
-This directory contains the data structures and algorithms that we will implement ourselves.
-
-Our library is designed to be independent of the MayDay-404 game. It should not contain aircraft, crew, flight, or other game-specific logic.
-
-The planned implementations include:
+Required data structures:
 
 - Singly Linked List
+- Hash Table with Linear Probing
+
+Main operations:
+
+- `addFlight()` — Insert a flight at the tail of the linked list.
+- `removeFlight(callsign)` — Remove a flight from the list and hash table.
+- `updateAllFlights()` — Traverse flights and decrement their fuel.
+- `displayAllFlights()` — Display registered flights.
+- `displayAllCrew()` — Display crew records.
+- `addCrew()` — Add a crew record.
+- `insert(callsign, flight*)` — Insert a flight into the hash table.
+- `find(callsign)` — Find a flight by callsign.
+- `remove(callsign)` — Remove a flight from the hash table.
+- `displayStats()` — Display load factor, collision count, and longest probe chain.
+
+The aircraft linked list is the primary owner of flight records. The hash table provides fast flight lookup by callsign.
+
+**Input files:** `flights.txt`, `crew.txt`
+
+#### Module 2: Landing & Emergency Dispatch
+
+**Class:** `EmergencyLanding`
+
+Manages normal arrivals and emergency landing requests.
+
+Required data structures:
+
+- Custom Queue
+- Custom Min Heap
+
+Main operations:
+
+- `enqueueNormal(flight*)`
+- `dequeueNormal()`
+- `frontNormal()`
+- `isEmptyNormal()`
+- `displayNormalQueue()`
+- `insertEmergency(flight*)`
+- `extractMin()`
+- `peekMin()`
+- `isEmptyHeap()`
+- `displayHeap()`
+
+Normal arrivals are processed using FIFO order. Emergency arrivals are dispatched according to their priority.
+
+When two emergency flights have the same priority, the flight with the earlier arrival tick must be dispatched first.
+
+If the normal queue is not empty, the next landing is taken from the queue. Otherwise, the highest-priority emergency is extracted from the heap.
+
+**Input file:** `scenario.txt`
+
+#### Module 3: Command History & Undo
+
+**Class:** `CommandHistory`
+
+Maintains a history of commands issued by the CRO and supports undo and redo operations.
+
+Required data structures:
+
 - Doubly Linked List
 - Stack
-- Queue
-- Min Heap
-- Hash Table
-- Binary Search Tree
-- AVL Tree
-- Graph
-- BFS and DFS
-- Dijkstra's Algorithm
-- Kruskal's Algorithm
-- Union-Find
 
-**Important:** We are using C++ templates for reusable data structures. Therefore, template implementations will normally be written in `.hpp` header files. We do not need separate `.cpp` files for those template implementations.
+Undoable commands:
 
-### B. MayDay-404 Application
+- Clear flight for runway.
+- Reroute flight to alternate runway.
+- Escalate priority level.
+- Intercept hijack.
+- Counter cyber alert.
 
-Location: `application/`
+Main operations:
 
-This is where we will develop the actual simulation game.
+- `logCommand(action, callsign)`
+- `pushSnapshot(flight*, priorState)`
+- `undo()`
+- `redo()`
+- `displayHistory(count)`
+- `displayLastCommand()`
 
-The application will use our custom DSA library to implement the different requirements of the project.
+The command history is maintained in a doubly linked list. Snapshots store the previous state of affected flights, including runway, priority, sector, and status.
 
-The planned responsibilities include:
-
-- Managing aircraft and crew information.
-- Handling landing requests and emergencies.
-- Maintaining command history.
-- Searching and organizing flight information.
-- Managing the airspace network.
-- Exploring the airspace using graph traversal.
-- Finding routes between locations.
-- Optimizing airspace connections.
-- Managing game progression and simulation rules.
-- Saving and retrieving player scores.
-
-These are planned responsibilities. We have prepared the project structure, but the actual application functionality still needs to be implemented.
+An undo operation restores the previous state. Redo reapplies an undone command.
 
 ---
 
-## 5. Complete Repository Structure
+### Phase 2: Searchable Structures
 
-We have organized the repository into separate sections for our custom DSA library, the actual game application, testing, documentation, and the final project report.
+This phase focuses on Binary Search Trees and AVL Trees.
 
-The following is our planned complete repository structure:
+#### Module 4: Flight Manifest
+
+**Class:** `BSTflight`
+
+Maintains an ordered index of flights using a Binary Search Tree keyed by callsign.
+
+Required data structure:
+
+- Binary Search Tree (BST)
+
+Main operations:
+
+- `insert(flight*)`
+- `search(callsign)`
+- `inorderTraversal()`
+- `height()`
+- `destroyTree()`
+
+The inorder traversal displays flights alphabetically by callsign.
+
+#### Module 5: Balanced Flight Index
+
+**Class:** `AVLflight`
+
+Maintains a self-balancing flight index using an AVL Tree.
+
+Required data structure:
+
+- AVL Tree
+
+Main operations:
+
+- `insert()`
+- `search()`
+- `inorderTraversal()`
+- `height()`
+- `rotateLeft()`
+- `rotateRight()`
+- `rotateLeftRight()`
+- `rotateRightLeft()`
+- `destroyTree()`
+
+The AVL Tree maintains balanced height through rotations.
+
+**Required demonstration:** Insert at least 15 callsigns in alphabetical order into both the BST and AVL Tree, then compare their heights.
+
+---
+
+### Phase 3: Graphs & Algorithms
+
+This phase focuses on graph representations, graph traversal, shortest paths, and minimum spanning trees.
+
+#### Module 6: Airspace Network
+
+**Class:** `SpaceGraph`
+
+Represents the airspace as a weighted graph.
+
+Required graph representations:
+
+- Adjacency List
+- Adjacency Matrix
+
+Sectors represent vertices, while corridors represent weighted edges. Edge weights represent travel time in seconds.
+
+Main operations:
+
+- `addSector(name)`
+- `addCorridor(from, to, weightSeconds)`
+- `getWeight(from, to)`
+- `displayAdjacencyList()`
+- `displayAdjacencyMatrix()`
+- `getSectorCount()`
+
+Initial airspace sectors:
+
+- Control Tower
+- Air Segment (North)
+- Cache Fly (East)
+- Syntax Sector (West)
+- Alpha Tree (South)
+- Restricted Zone
+- Holding Pattern Delta
+
+Runways:
+
+- Runway 12 (West) — Emergency-capable.
+- Runway 04 (East) — High-traffic.
+- Runway 17 (South).
+- Runway 09 (North) — Emergency-capable, low-traffic.
+
+The network must support the required connectivity conditions, including the Restricted Zone being reachable only through Alpha Tree.
+
+**Input file:** `airspace.txt`
+
+#### Module 7: Radar Sweep
+
+**Class:** `RadarSweep`
+
+Implements graph traversal to examine airspace connectivity and locate missing flights.
+
+Required algorithms:
+
+- Breadth-First Search (BFS)
+- Depth-First Search (DFS)
+
+Required data structures:
+
+- Custom Queue for BFS.
+- Custom Stack or recursion for DFS.
+
+Main operations:
+
+- `bfsFrom(sourceSector)`
+- `dfsFrom(sourceSector)`
+- `isReachable(from, to)`
+- `searchMissingFlight(lastKnownSector)`
+
+BFS examines sectors level by level. DFS explores sectors depth-first.
+
+Missing-flight searches use the airspace graph to determine whether a missing aircraft can be located from its last known sector.
+
+#### Module 8: Fastest Intercept Route
+
+**Class:** `RouteFinder`
+
+Calculates the fastest route from a source sector to a destination runway.
+
+Required algorithm:
+
+- Dijkstra's Algorithm
+
+Required data structures:
+
+- Weighted Graph
+- Custom Min Heap
+- Adjacency Matrix
+
+Main operations:
+
+- `findFastestRoute(sourceSector, destinationRunway)`
+- `printRoute(route)`
+
+The result must include the complete sector sequence and total travel time.
+
+Parent-pointer tracing must be used to reconstruct the route.
+
+#### Module 9: Minimum Radar Coverage
+
+**Class:** `RadarMST`
+
+Calculates the minimum-cost set of corridors needed to connect the airspace network.
+
+Required algorithm:
+
+- Minimum Spanning Tree (MST)
+
+The implementation may use either:
+
+- Kruskal's Algorithm with Union-Find and custom edge sorting.
+- Prim's Algorithm with a custom Min Heap.
+
+Main operations:
+
+- `computeMST()`
+- `displayMST()`
+- `verifyConnectivity()`
+
+The module must display the selected corridors and total cost and demonstrate that removing an MST edge disconnects the network.
+
+---
+
+### Phase 4: Integration
+
+This phase combines all modules into one playable game.
+
+#### Module 10: Game Loop & UI
+
+**Class:** `GameEngine`
+
+Integrates the modules and manages the complete simulation.
+
+Main responsibilities:
+
+- Display the main menu and game menu.
+- Advance the simulation by ticks.
+- Move aircraft toward assigned runways.
+- Decrement fuel.
+- Escalate emergencies.
+- Spawn new flights according to the scenario.
+- Handle missing flights.
+- Process player commands.
+- Display the current game state.
+- Check win and lose conditions.
+
+Each iteration represents one tick of 30 simulated seconds.
+
+The player can issue up to two actions per turn. Viewing radar, manifests, and the airspace map does not consume an action.
+
+#### Module 11: File Persistence
+
+**Class:** `LeaderBoard`
+
+Handles loading game data and saving game results.
+
+Input files:
+
+- `flights.txt`
+- `crew.txt`
+- `airspace.txt`
+- `scenario.txt`
+- `rules.txt`
+- `about.txt`
+- `gamemenu.txt`
+
+Output file:
+
+- `leaderboard.txt`
+
+Main operations:
+
+- `loadFlights(filename)`
+- `loadCrew(filename)`
+- `loadAirspace(filename)`
+- `loadScenario(filename)`
+- `saveResult(...)`
+- `displayLeaderboard()`
+
+The leaderboard stores previous game results and displays them according to the required ranking:
+
+1. WIN entries rank above LOSE entries.
+2. Higher credibility ranks higher.
+3. More ticks used rank higher when result and credibility are equal.
+4. More recent dates rank higher as the final tiebreaker.
+
+## 4. Data Structures and Algorithms
+
+The following table summarizes the required concepts and their applications in MayDay-404.
+
+| Data Structure / Algorithm | Application |
+|---|---|
+| Singly Linked List | Aircraft registry |
+| Doubly Linked List | Command history |
+| Stack | Undo and redo |
+| Queue | Normal landing sequence and BFS |
+| Min Heap | Emergency dispatch and Dijkstra |
+| Hash Table with Probing | Fast flight lookup by callsign |
+| Binary Search Tree | Ordered flight manifest |
+| AVL Tree | Balanced flight index |
+| Graph | Airspace network |
+| BFS | Radar sweep and missing-flight search |
+| DFS | Sector traversal |
+| Dijkstra's Algorithm | Fastest route to a runway |
+| Minimum Spanning Tree | Minimum radar coverage |
+| Union-Find | Kruskal's algorithm, if selected |
+
+**Important:** Built-in STL templates, functions, and libraries are forbidden for the required data structures and algorithms. These must be implemented from scratch.
+
+## 5. Game Mechanics
+
+### Simulation Ticks
+
+- Tick 0 represents the beginning of the game.
+- Each turn advances the simulation by one tick.
+- Each tick represents 30 simulated seconds.
+- The game ends at Tick 30.
+- All emergency timers are measured in ticks.
+
+### Actions Per Turn
+
+Each turn allows a maximum of two player actions.
+
+Free actions:
+
+- View radar.
+- View manifest.
+- View airspace map.
+- View pending arrivals.
+
+Action-consuming commands include:
+
+- Register aircraft.
+- Clear flight for runway.
+- Reroute flight.
+- Escalate priority.
+- Undo.
+- Search for missing flight.
+- Intercept hijack.
+- Counter cyber attack.
+- Run BFS or DFS.
+- Run Dijkstra.
+- Run MST.
+
+After two actions are used, the turn ends automatically. The player may also advance the tick using the End Turn option.
+
+### Credibility
+
+Starting credibility is 100. It can increase up to 200.
+
+| Event | Credibility Change |
+|---|---:|
+| Flight lands safely | +2 |
+| Hijack countered | +20 |
+| Cyber alert countered | +15 |
+| War aircraft intercepted or cleared | +30 |
+| Missing flight located | +20 |
+| Wrong command | -5 |
+| Failed hijack counter | -20 |
+| Failed cyber counter | -15 |
+| Emergency landing on Runway 04 or 17 | -10 |
+| Aircraft crash | -50 |
+
+Reaching zero credibility results in game over.
+
+### Emergency Priority
+
+| Priority | Emergency | Escalation / Failure |
+|---:|---|---|
+| 1 | War | Mission failure after 2 ticks |
+| 2 | Hijack | Mission failure after 3 ticks |
+| 3 | Cyber Attack | Radar relay disabled |
+| 4 | Missing Flight | Restricted Zone breach |
+| 5 | Fuel | Crash after 5 ticks |
+| 6 | Medical | Passenger casualty after 4 ticks |
+| 7 | Weather | Forced crash after 4 ticks |
+| 8 | Mechanical | Crash after 5 ticks |
+| 9 | Normal | Routine arrival |
+
+When emergencies have equal priority, earlier arrival time determines dispatch order.
+
+### Cyber Attack
+
+- The affected sector or corridor becomes degraded.
+- If not countered within two ticks, one corridor is disabled.
+- If not countered within three ticks, the Control Tower becomes degraded.
+- When the tower is degraded, routing operations cost two actions instead of one.
+- Wrong-move credibility penalties increase by an additional five points.
+
+### War Event
+
+- A hostile military aircraft from NullAir enters the airspace.
+- The CRO has two ticks to clear or intercept it.
+- If the aircraft is not handled within the allowed time, the mission fails.
+
+### Missing Flight
+
+- A missing aircraft disappears from the active flight registry.
+- Its last known sector and tick window are recorded separately.
+- The CRO must have the required credibility to attempt a search.
+- BFS is used from the Control Tower to the last known sector.
+- Successful location gives 20 credibility.
+- Failure to locate the aircraft within its tick window results in a Restricted Zone breach.
+
+## 6. Game Menus
+
+### Main Menu
+
+The main menu contains:
+
+- New Game
+- View Leaderboard
+- About
+- Rules
+- Exit
+
+### Game Menu
+
+| Option | Command |
+|---:|---|
+| 01 | Register Aircraft |
+| 02 | Register Crew Member |
+| 03 | Search Flight by Call Sign |
+| 04 | Add Normal Arrival |
+| 05 | Add Emergency Arrival |
+| 06 | Process Next Landing |
+| 07 | Clear Flight for Runway |
+| 08 | Reroute Flight |
+| 09 | Intercept Aircraft |
+| 10 | Escalate Priority |
+| 11 | Counter Cyber Attack |
+| 12 | Undo Last Command |
+| 13 | Display Pending Arrivals |
+| 14 | Display Crew Members |
+| 15 | Display Flight Records |
+| 16 | Display Airspace Network |
+| 17 | BFS Radar Sweep |
+| 18 | DFS Sector Traversal |
+| 19 | Search for Missing Flight |
+| 20 | Find Fastest Route to Runway |
+| 21 | Generate Minimum Radar Coverage |
+| 22 | Compare BST and AVL Heights |
+| 23 | End Turn / Advance Tick |
+| 24 | Exit to Main Menu |
+
+## 7. Game World Entities
+
+The simulation includes the following categories of entities:
+
+- Aircraft types and their characteristics.
+- Pilots and crew members.
+- Runways and airspace sectors.
+- Threat actors responsible for hijack and cyber events.
+- Missing flights.
+- Emergency categories.
+- Aviation calls and terminology.
+
+The project description provides sample aircraft, pilot profiles, threat actors, missing flights, airspace sectors, corridors, and emergency categories. These details are used to make the simulation realistic and meaningful.
+
+## 8. Input and Output Files
+
+### Input Files
+
+| File | Purpose |
+|---|---|
+| `flights.txt` | Initial aircraft records |
+| `crew.txt` | Crew and pilot records |
+| `airspace.txt` | Airspace sectors and corridors |
+| `scenario.txt` | Flight and emergency spawn schedule |
+| `rules.txt` | Game rules, ticks, credibility, and win/lose conditions |
+| `about.txt` | Game and development team information |
+| `gamemenu.txt` | Game menu options |
+
+### Output File
+
+| File | Purpose |
+|---|---|
+| `leaderboard.txt` | Stores completed game results |
+
+The leaderboard format is:
 
 ```text
-MayDay-404/
-│
-├── dsa-library/
-│   ├── include/
-│   │   └── dsa/
-│   │       ├── singly_linked_list.hpp
-│   │       ├── doubly_linked_list.hpp
-│   │       ├── stack.hpp
-│   │       ├── queue.hpp
-│   │       ├── min_heap.hpp
-│   │       ├── hash_table.hpp
-│   │       ├── bst.hpp
-│   │       ├── avl_tree.hpp
-│   │       ├── graph.hpp
-│   │       ├── dijkstra.hpp
-│   │       ├── kruskal.hpp
-│   │       └── union_find.hpp
-│   │
-│   ├── tests/
-│   │   ├── test_linked_list.cpp
-│   │   ├── test_doubly_linked_list.cpp
-│   │   ├── test_stack.cpp
-│   │   ├── test_queue.cpp
-│   │   ├── test_heap.cpp
-│   │   ├── test_hash_table.cpp
-│   │   ├── test_bst.cpp
-│   │   ├── test_avl.cpp
-│   │   └── test_graph.cpp
-│   │
-│   └── CMakeLists.txt
-│
-├── application/
-│   ├── include/
-│   │   └── mayday/
-│   │       ├── models/
-│   │       │   ├── flight.hpp
-│   │       │   ├── crew.hpp
-│   │       │   └── command.hpp
-│   │       │
-│   │       ├── modules/
-│   │       │   ├── registration.hpp
-│   │       │   ├── emergency_dispatch.hpp
-│   │       │   ├── command_history.hpp
-│   │       │   ├── flight_index.hpp
-│   │       │   ├── space_graph.hpp
-│   │       │   ├── radar_sweep.hpp
-│   │       │   ├── route_finder.hpp
-│   │       │   └── radar_mst.hpp
-│   │       │
-│   │       ├── game/
-│   │       │   └── game_engine.hpp
-│   │       │
-│   │       └── ui/
-│   │           ├── menu.hpp
-│   │           └── display.hpp
-│   │
-│   ├── src/
-│   │   ├── models/
-│   │   │   ├── flight.cpp
-│   │   │   ├── crew.cpp
-│   │   │   └── command.cpp
-│   │   │
-│   │   ├── modules/
-│   │   │   ├── registration.cpp
-│   │   │   ├── emergency_dispatch.cpp
-│   │   │   ├── command_history.cpp
-│   │   │   ├── flight_index.cpp
-│   │   │   ├── space_graph.cpp
-│   │   │   ├── radar_sweep.cpp
-│   │   │   ├── route_finder.cpp
-│   │   │   └── radar_mst.cpp
-│   │   │
-│   │   ├── game/
-│   │   │   └── game_engine.cpp
-│   │   │
-│   │   ├── ui/
-│   │   │   ├── menu.cpp
-│   │   │   └── display.cpp
-│   │   │
-│   │   └── main.cpp
-│   │
-│   ├── data/
-│   │   ├── flights.txt
-│   │   ├── crew.txt
-│   │   ├── airspace.txt
-│   │   ├── scenario.txt
-│   │   ├── rules.txt
-│   │   ├── about.txt
-│   │   ├── gamemenu.txt
-│   │   └── leaderboard.txt
-│   │
-│   └── CMakeLists.txt
-│
-├── tests/
-│   ├── test_registration.cpp
-│   ├── test_emergency_dispatch.cpp
-│   ├── test_command_history.cpp
-│   ├── test_flight_index.cpp
-│   ├── test_radar.cpp
-│   ├── test_route_finder.cpp
-│   └── test_game_engine.cpp
-│
-├── docs/
-│   ├── architecture.md
-│   ├── dsa-complexity.md
-│   └── testing.md
-│
-├── report/
-│   └── MayDay404_Final_Report.docx
-│
-├── CMakeLists.txt
-├── README.md
-└── .gitignore
+#|CRO|Result|Cred|Ticks|Crash|Hijack|Breach|Date
 ```
 
-### Understanding the Repository
+## 9. Project Requirements
 
-| Directory / File | Responsibility |
-|---|---|
-| `dsa-library/` | Our independent, reusable custom DSA implementations. |
-| `dsa-library/include/dsa/` | Template-based data structure and algorithm header files. |
-| `dsa-library/tests/` | Tests for individual DSA implementations. |
-| `application/include/` | Application class and module declarations. |
-| `application/src/` | Actual game and module implementations. |
-| `application/data/` | Text files containing game data and information. |
-| `tests/` | Tests for application modules and game integration. |
-| `docs/` | Technical documentation about architecture, complexity, and testing. |
-| `report/` | Final university project report. |
+The completed project must demonstrate:
 
-### Important Notes
+- Custom implementation of the required data structures.
+- Dynamic memory allocation and pointer management.
+- Integration of all 11 project modules.
+- Correct application of searching, traversal, and graph algorithms.
+- File handling for game input and output.
+- A playable, menu-driven simulation.
+- Handling of invalid input and invalid moves through console messages.
+- Correct win and lose conditions.
+- Persistent leaderboard across sessions.
+- Proper documentation and demonstration of the project.
 
-1. `.hpp` files in `dsa-library/` contain our template implementations. We do not need separate `.cpp` files for those templates.
-2. Application `.hpp` files contain declarations, while their corresponding `.cpp` files contain implementations.
-3. DSA tests and application tests have separate responsibilities.
-4. The root `CMakeLists.txt` coordinates the complete project build.
-5. This is our planned final structure. We will create implementation and test files as the corresponding work is developed; an empty placeholder file does not mean its functionality is complete.
+## 10. Build and Run
 
----
+The project uses C++17 and CMake.
 
-## 6. Setting Up the Project
-
-First, every team member must clone the same GitHub repository.
+Configure the project:
 
 ```bash
-git clone https://github.com/MuhammadFaizanAI/DS_Project_BCS_F_25P-0585_25F-0757_25F-0677.git
-cd MayDay-404
+cmake -S . -B build
 ```
 
+Build:
 
-### A. Windows Setup
+```bash
+cmake --build build
+```
 
-Our Windows team members can use either VS Code or Visual Studio.
+Run on Linux:
 
-**Required tools:**
+```bash
+./build/MayDay404
+```
 
-- Git for Windows
-- CMake
-- A C++17-compatible compiler
-- VS Code or Visual Studio
-
-**For Visual Studio:**
-
-1. Install Visual Studio with the Desktop development with C++ workload.
-2. Open the cloned `MayDay-404` folder.
-3. Allow Visual Studio to detect the root `CMakeLists.txt`.
-4. Select the appropriate configuration.
-5. Build and run the project through Visual Studio.
-
-**For VS Code:**
-
-1. Install VS Code.
-2. Install the C/C++ extension.
-3. Install the CMake Tools extension.
-4. Open the `MayDay-404` folder.
-5. Configure the project using CMake Tools.
-6. Build and run the executable.
-
-**Alternatively, build through PowerShell:**
+On Windows, the executable location depends on the selected CMake generator and build configuration. For a Visual Studio Debug build:
 
 ```powershell
-cmake -S . -B build
-cmake --build build
+.\build\Debug\MayDay404.exe
 ```
 
-### B. Arch Linux / Omarchy Setup
+## 11. Known Limitations
 
-My development environment is Arch Linux (Omarchy), and I use Neovim.
+The implementation status and any deviations from the project requirements should be documented here as development progresses.
 
-Install the required packages:
-
-```bash
-sudo pacman -S git cmake gcc make
-```
-
-Clone the repository:
-
-```bash
-git clone YOUR_REPOSITORY_URL
-cd MayDay-404
-```
-
-Configure and build:
-
-```bash
-cmake -S . -B build
-cmake --build build
-```
-
-After the executable is successfully generated, run it from the build directory.
-
-The exact executable path depends on our CMake configuration and build setup.
-
----
-
-## 7. How We Will Work Together on GitHub
-
-We are using **one shared GitHub repository and one `main` branch**.
-
-We are keeping our collaboration workflow simple. We do not need feature branches or a complicated pull-request process for this project.
-
-### Before starting work
-
-Always update your local repository:
-
-```bash
-git pull origin main
-```
-
-### After completing your work
-
-Add your changes:
-
-```bash
-git add .
-```
-
-Create a commit:
-
-```bash
-git commit -m "feat: implement linked list"
-```
-
-Push your changes:
-
-```bash
-git push origin main
-```
-
-### Important Collaboration Rules
-
-1. Always pull the latest changes before starting your work.
-2. Do not work on the same files simultaneously without coordinating.
-3. Before pushing, make sure your local repository is updated.
-4. Use meaningful commit messages.
-5. Tell the other team members when you are making changes to shared files.
-6. If Git reports a conflict, coordinate with the teammate involved and resolve it before pushing.
-
-**Our goal:** Keep one updated project that all three of us can work on, regardless of the operating system or editor we use.
-
----
-
-## 8. Understanding Our File Types
-
-We will use different file types for different responsibilities.
-
-| Extension | Purpose |
-|---|---|
-| `.hpp` | Header files, including our template-based DSA implementations. |
-| `.cpp` | Source files containing application and non-template implementations. |
-| `.txt` | Game data and other text-based files. |
-| `.md` | Project documentation. |
-| `CMakeLists.txt` | Build configuration. |
-
-For example, our linked list implementation will be placed in:
-
-```text
-dsa-library/include/dsa/singly_linked_list.hpp
-```
-
-An application module will have its declaration and implementation separated:
-
-```text
-application/include/mayday/modules/
-application/src/modules/
-```
-
----
-
-## 9. Testing
-
-We have separated testing into two levels.
-
-### A. DSA Library Tests
-
-These will verify that our individual data structures and algorithms work correctly.
-
-Examples:
-
-- Linked list insertion and deletion.
-- Stack push and pop.
-- Queue enqueue and dequeue.
-- BST searching and traversal.
-- AVL balancing.
-- Graph traversal and shortest paths.
-
-### B. Application Tests
-
-These will verify that our DSA implementations work correctly when used in the actual game.
-
-Examples:
-
-- Aircraft registration.
-- Emergency dispatch.
-- Command history.
-- Flight searching.
-- Route finding.
-- Game progression.
-
-We will add the actual test programs as we implement each component.
-
----
-
-## 10. Current Development Status
-
-This is where we currently stand.
-
-### Completed / Prepared
-
-- [x] GitHub repository created.
-- [x] Main project directory structure prepared.
-- [x] DSA library and application separated.
-- [x] Header and source directory organization prepared.
-- [x] Root CMake configuration prepared.
-- [x] DSA library CMake configuration prepared.
-- [x] Application CMake configuration prepared.
-- [x] Development environments identified for all three members.
-
-### Still To Do
-
-- [ ] Implement custom data structures.
-- [ ] Test individual DSA implementations.
-- [ ] Implement application models and modules.
-- [ ] Integrate the DSA library with the game.
-- [ ] Implement the complete game engine.
-- [ ] Test the complete simulation.
-- [ ] Prepare the final report and project documentation.
-
-**Important:** The current repository preparation is the foundation of our project. The actual DSA implementations and game functionality will be developed collaboratively from this point onward.
-
----
-
-## 11. Final Note for Our Team
-
-We are building one project together, not three separate implementations.
-
-Our editors and operating systems may be different, but our code, project structure, build system, and GitHub repository are shared.
-
-Before implementing a data structure or application module, we should agree on its interface and expected behavior. This will make integration easier and prevent our individual implementations from conflicting with one another.
-
-Let's keep the code understandable, implement the required structures ourselves, test our work, and make sure every team member understands the complete project before the final demonstration.
-
-**MayDay-404 — Built together, from scratch.**
