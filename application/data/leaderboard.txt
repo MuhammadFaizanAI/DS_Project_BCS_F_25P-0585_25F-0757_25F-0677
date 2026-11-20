@@ -1,0 +1,4 @@
+#|CRO|Result|Cred|Ticks|Crash|Hijack|Breach|Date
+1|Mustafa|WIN|180|20|0|0|0|15-11-26
+2|Rock|LOSE|0|10|1|1|0|14-11-26
+3|Aurangzaib|WIN|104|17|0|0|0|13-11-26

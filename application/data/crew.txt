@@ -1,0 +1,4 @@
+EmployeeID|Name|Role|AssignedCallsign
+EBB51|Capt. M.M. Alam|Captain (PIC)|BB-876
+EBB27|Capt. Rashid Minhas|First Officer (FO)|BB-876
+EBB33|Ms. Hina Tariq|Purser|BB-876

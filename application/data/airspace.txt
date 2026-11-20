@@ -1,0 +1,7 @@
+From|To|WeightTicks
+Control Tower|Runway 12 (West)|2
+Control Tower|Air Segment (North)|2
+Control Tower|Syntax Sector (West)|2
+Air Segment (North)|Runway 04 (East)|1
+Air Segment (North)|Cache Fly (East)|1
+Cache Fly (East)|Runway 09 (North)|1

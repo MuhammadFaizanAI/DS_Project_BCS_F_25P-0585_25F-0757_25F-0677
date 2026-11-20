@@ -1,0 +1,7 @@
+Tick|EventType|Target
+5|Hijack|BB-876
+9|Cyber|Syntax Sector (West)
+12|Fuel|BB-437
+18|Missing|PK404
+25|War|NA-640
+25|War|NA-429

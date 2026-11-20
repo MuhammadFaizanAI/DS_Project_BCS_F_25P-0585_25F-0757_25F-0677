@@ -1,0 +1,14 @@
+Max Ticks = 30
+Starting Credibility = 100
+Wrong Command Penalty = 5
+Failed Hijack Penalty = 20
+Failed Cyber Penalty = 15
+Non Emergency Runway Penalty = 10
+Crash Penalty = 50
+Hijack Counter Gain = 20
+Cyber Counter Gain = 15
+War Counter Gain = 30
+Missing Found Gain = 20
+Safe Landing Gain = 2
+Win Condition = Survive All Ticks
+Lose Condition = Crash_OR_Hijack_OR_CyberBreach_OR_WarFailure_OR_CredibilityZero

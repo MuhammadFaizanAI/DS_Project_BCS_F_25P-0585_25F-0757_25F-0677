@@ -1,0 +1,26 @@
+======================= MayDay-404 ===============================
+[01] Register Aircraft
+[02] Register Crew Member
+[03] Search Flight by Call Sign
+[04] Add Normal Arrival
+[05] Add Emergency Arrival
+[06] Process Next Landing
+[07] Clear Flight for Runway
+[08] Reroute Flight
+[09] Intercept Aircraft
+[10] Escalate Priority
+[11] Counter Cyber Attack
+[12] Undo Last Command
+[13] Display Pending Arrivals
+[14] Display Crew Members
+[15] Display Flight Records
+[16] Display Airspace Network
+[17] BFS Radar Sweep
+[18] DFS Sector Traversal
+[19] Search for Missing Flight
+[20] Find Fastest Route to Runway
+[21] Generate Minimum Radar Coverage
+[22] Compare BST and AVL Heights
+[23] End Turn/Advance Tick
+[24] Exit to Main Menu
+=================================================================

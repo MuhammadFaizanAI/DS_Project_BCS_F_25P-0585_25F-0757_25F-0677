@@ -1,0 +1,8 @@
+======= MayDay-404 ======
+======= MAIN MENU =======
+[1] New Game
+[2] View Leader Board
+[3] About
+[4] Rules
+[5] Exit
+=========================
