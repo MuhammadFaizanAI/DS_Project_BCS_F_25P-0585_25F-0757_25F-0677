@@ -12,11 +12,13 @@ struct Flight {
     std::string origin;
     std::string destination;
 
+
     int passengerCount;
     int fuelRemaining;
 
     std::string currentSector;
     std::string assignedRunway;
+    std::string status;
 
     int arrivalTick;
     int priorityLevel;
